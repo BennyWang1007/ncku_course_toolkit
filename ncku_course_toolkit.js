@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ncku course toolkit
 // @namespace    Benny
-// @version      Alpha-v1
+// @version      1.0.2 alpha
 // @description  Toolkit for ncku course
 // @author       Benny, Wang
 // @homepage     https://github.com/BennyWang1007
@@ -69,7 +69,7 @@
 
     addBtn();
     let btn_node = document.getElementById("black_node");
-    qxinStart();
+    setBtn();
 
     GM_registerMenuCommand("ncku course setting", setMenu);
 
@@ -181,11 +181,9 @@
     }
 
     function show_pe_courses() {
-        pe_courses.freshman.forEach((ele) => (ele.style.display = ""));
-        pe_courses.sophomore.forEach((ele) => (ele.style.display = ""));
-        pe_courses.schoolTeam.forEach((ele) => (ele.style.display = ""));
-        pe_courses.male.forEach((ele) => (ele.style.display = ""));
-        pe_courses.female.forEach((ele) => (ele.style.display = ""));
+        for (const key in pe_courses) {
+            pe_courses[key].forEach((ele) => (ele.style.display = ""));
+        }
     }
 
     function hide_pe_courses() {
@@ -235,25 +233,25 @@
     }
     
     // set all variables of unavail
-    function set_unavail(unavail_time_int2) {
-        set_total_time(unavail_time_int2);
-        show_unavail();
-        set_unavail_courses();
-        hide_unavail();
-    }
+    // function set_unavail(unavail_time_int2) {
+    //     set_total_time(unavail_time_int2);
+    //     show_unavail();
+    //     set_unavail_courses();
+    //     hide_unavail();
+    // }
 
-    function qxinStart() {
+    function setBtn() {
         addDragEven();
         // setBtnClick();
-        document.querySelector("#rwl-setbtn").addEventListener("click", setMenu);
+        document.querySelector("#nct-setbtn").addEventListener("click", setMenu);
         if (nct_userData.addBtn) btn_node.checked = true;
     }
 
     // 設置按鈕
     function addBtn() {
         var node = document.createElement("course_toolkit_window");
-        node.id = "rwl-iqxin";
-        node.className = "rwl-exempt";
+        node.id = "nct-window";
+        node.className = "nct-exempt";
 
         var screenClientHeight = document.documentElement.clientHeight;
         var tempHeight;
@@ -281,7 +279,7 @@
             `position:fixed;top:${tempHeight}px;` +
             `left:${nct_userData.positionLeft}px;` +
             `right:${nct_userData.positionRight}px;`;
-        node.innerHTML = '<qxinbutton type="qxinbutton" id="rwl-setbtn"> set </qxinbutton> <lalala style="cursor:move; font-size:12px;">設定</lalala> <input type="checkbox" name="" id="black_node" >';
+        node.innerHTML = '<nctbutton type="nctbutton" id="nct-setbtn"> set </nctbutton> <text style="cursor:move; font-size:12px;">設定</text> <input type="checkbox" name="" id="black_node" >';
         if (window.self === window.top) {
             if (document.querySelector("body")) {
                 document.body.appendChild(node);
@@ -290,27 +288,25 @@
             }
         }
         node.addEventListener("mouseover", function () {
-            node.classList.add("rwl-active-iqxin");
+            node.classList.add("nct-window-active");
         });
-        // node.addEventListener("mouseleave",function(){
-        //     setTimeout(function(){
-        //         node.classList.remove("rwl-active-iqxin");
-        //         black_check(black_node.checked);
-        //     },100)
-        // });
+        node.addEventListener("mouseleave",function(){
+            setTimeout(function(){
+                node.classList.remove("nct-window-active");
+            },100)
+        });
 
         var style = document.createElement("style");
-        style.type = "text/css";
 
         var styleInner =
-            "#rwl-iqxin{" +
+            "#nct-window{" +
                 "position:fixed;" +
                 "transform:translate(-95%,0);" +
                 "width:85px;" +
                 "height:25px;" +
                 "font-size:12px;" +
                 "font-weight: 500;" +
-                "font-family:Verdana, Arial, '宋体';" +
+                // "font-family:Verdana, Arial, '宋体';" +
                 "color:#fff;" +
                 "background:#333;" +
                 "z-index:2147483647;" +
@@ -320,7 +316,7 @@
                 "overflow:hidden;" +
                 "user-select:none;" +
                 "text-align:center;" +
-                "white-space:nowrap;" +
+                // "white-space:nowrap;" +
                 "line-height:25px;" +
                 "padding:0 16px;" +
                 "border:1px solid #ccc;" +
@@ -328,7 +324,7 @@
                 "border-bottom-right-radius:5px;" +
                 "box-sizing: content-box;" +
             "}" +
-            "#rwl-iqxin input{" +
+            "#nct-window input{" +
                 "margin: 0;" +
                 "padding: 0;" +
                 "vertical-align:middle;" +
@@ -339,19 +335,15 @@
                 "opacity: 1;" +
                 "cursor: pointer;" +
             "}" +
-            "#rwl-iqxin.rwl-active-iqxin{" +
+            "#nct-window.nct-window-active{" +
                 "left: 0px;" +
                 "transform:translate(0,0);" +
                 "opacity: 0.9;" +
                 "height: 32px;" +
                 "line-height: 32px" +
             "}" +
-            "#rwl-iqxin label{" +
-                "margin:0;" +
-                "padding:0;" +
-                "font-weight:500;" +
-            "}" +
-            "#rwl-iqxin #rwl-setbtn{" +
+            "#nct-window label{ margin:0; padding:0; font-weight:500; }" +
+            "#nct-window #nct-setbtn{" +
                 "margin: 0 4px 0 0;" +
                 "padding: 0 0 0 4px;" +
                 "border: none;" +
@@ -361,13 +353,13 @@
                 "color: #000;" +
             "} ";
         if (!nct_userData.addBtn) {
-            var styleTemp = "#rwl-iqxin{display:none}";
+            var styleTemp = "#nct-window{display:none}";
             style.innerHTML = styleInner + styleTemp;
         } else {
             style.innerHTML = styleInner;
         }
-        if (document.querySelector("#rwl-iqxin")) {
-            document.querySelector("#rwl-iqxin").appendChild(style);
+        if (document.querySelector("#nct-window")) {
+            document.querySelector("#nct-window").appendChild(style);
         } else {
             GM_addStyle(styleInner);
         }
@@ -375,7 +367,7 @@
 
     // open setting menu
     function setMenu() {
-        var oldEditBox = document.querySelector("#rwl-setMenu");
+        var oldEditBox = document.querySelector("#nct-setMenu");
         if (oldEditBox) {
             oldEditBox.parentNode.removeChild(oldEditBox);
             return;
@@ -386,7 +378,7 @@
         // debug();
 
         var odom = document.createElement("div");
-        odom.id = "rwl-setMenu";
+        odom.id = "nct-setMenu";
         odom.style.cssText =
             "position: fixed;" +
             "top: 100px;" +
@@ -395,7 +387,7 @@
             "background: #fff;" +
             "border-radius: 4px;";
         GM_addStyle(
-            "#rwl-setMenuSave, #rwl-reset, #rwl-setMenuClose, #rwl-getRegistedCourses{" +
+            "#nct-setMenuSave, #nct-reset, #nct-setMenuClose, #nct-getRegistedCourses{" +
                 "margin: 0;" +
                 "padding: 0 2px;" +
                 "border: none;" +
@@ -404,17 +396,17 @@
                 "background: #fff;" +
                 "color: #000;" +
             "}" +
-            "#rwl-reset{ border: 1px solid #666; }" +
-            "#rwl-setMenuSave{ border: 1px solid green; }" +
-            "#rwl-setMenuClose{ border: 1px solid red; }" +
-            "#rwl-getRegistedCourses{ border: 1px solid blue; }" +
-            "#rwl-setMenu{" +
+            "#nct-reset{ border: 1px solid #666; }" +
+            "#nct-setMenuSave{ border: 1px solid green; }" +
+            "#nct-setMenuClose{ border: 1px solid red; }" +
+            "#nct-getRegistedCourses{ border: 1px solid blue; }" +
+            "#nct-setMenu{" +
                 "text-align:left;" +
                 "font-size:14px;" +
                 "z-index:999999;" +
                 "border: 1px solid cornflowerblue;" +
             "}" +
-            "#rwl-setMenu p{ margin:5px auto; }" +
+            "#nct-setMenu p{ margin:5px auto; }" +
             "#auto_registrate { float: right; }"
         );
         let innerH = `<div class='center'>
@@ -424,18 +416,18 @@
         } title="點擊腳本設定可重新開啟" </label></p>
         <p>隱藏 不可用時段<input id='hide_unavailable' type='checkbox' ${
             d.hide_unavailable ? "checked" : ""
-        }>額滿時段<input id='hide_full' type='checkbox' ${
+        }>&nbsp&nbsp額滿時段<input id='hide_full' type='checkbox' ${
             d.hide_full ? "checked" : ""
         }></p>
-        <p>PE  男 <input id='hide_pe_male' type='checkbox' ${
+        <p>體育  男 <input id='hide_pe_male' type='checkbox' ${
             d.hide_pe_male ? "checked" : ""
-        }>女<input id='hide_pe_female' type='checkbox' ${
+        }> 女<input id='hide_pe_female' type='checkbox' ${
             d.hide_pe_female ? "checked" : ""
-        }>大一<input id='hide_pe_freshman' type='checkbox' ${
+        }> 大一<input id='hide_pe_freshman' type='checkbox' ${
             d.hide_pe_freshman ? "checked" : ""
-        }>大二<input id='hide_pe_sophomore' type='checkbox' ${
+        }> 大二<input id='hide_pe_sophomore' type='checkbox' ${
             d.hide_pe_sophomore ? "checked" : ""
-        }>校隊<input id='hide_pe_schoolTeam' type='checkbox' ${
+        }> 校隊<input id='hide_pe_schoolTeam' type='checkbox' ${
             d.hide_pe_schoolTeam ? "checked" : ""
         }></p>
         <p>&nbsp&nbsp&nbsp一  二  三  四  五</p>`;
@@ -443,15 +435,15 @@
             innerH += "<p>" + (i == 10 ? "A" : i.toString());
             for (let j = 1; j < 6; j++) {
                 let chk = d.unavailable_int.includes(10 * j + i) ? "checked" : "";
-                innerH += `&nbsp<input type="checkbox" id="unavail${(10*j +i).toString()}" ${chk}></input>`;
+                innerH += `&nbsp<input type="checkbox" id="unavail${(10*j+i).toString()}" ${chk}></input>`;
             }
             innerH += "</p>";
         }
         innerH +=
-            "<qxinbutton id='rwl-reset'>重設</qxinbutton> &nbsp;&nbsp;&nbsp;" +
-            "<qxinbutton id='rwl-setMenuSave'>儲存</qxinbutton> &nbsp;&nbsp;&nbsp;" +
-            "<qxinbutton id='rwl-setMenuClose' onclick='this.parentNode.parentNode.removeChild(this.parentNode);' title='' >關閉</qxinbutton> &nbsp;&nbsp;&nbsp;" +
-            "<qxinbutton id='rwl-getRegistedCourses' title='請先移至已選課程清單'>取得已選課程</qxinbutton>" +
+            "<nctbutton id='nct-reset'>重設</nctbutton> &nbsp;&nbsp;&nbsp;" +
+            "<nctbutton id='nct-setMenuSave'>儲存</nctbutton> &nbsp;&nbsp;&nbsp;" +
+            "<nctbutton id='nct-setMenuClose' onclick='this.parentNode.parentNode.removeChild(this.parentNode);' title='' >關閉</nctbutton> &nbsp;&nbsp;&nbsp;" +
+            "<nctbutton id='nct-getRegistedCourses' title='請先移至已選課程清單'>取得已選課程</nctbutton>" +
             "<p>目標課程代碼 <input id='target_courses' type='text' value='" +
             d.target_courses +
             "'></input>&nbsp;&nbsp;&nbsp" +
@@ -463,43 +455,43 @@
         document.body.appendChild(odom);
 
         document
-            .querySelector("#rwl-setMenuSave")
+            .querySelector("#nct-setMenuSave")
             .addEventListener("click", saveSetting);
         document
-            .querySelector("#rwl-setMenuClose")
+            .querySelector("#nct-setMenuClose")
             .addEventListener("click", closeMenu);
         document
-            .querySelector("#rwl-reset")
-            .addEventListener("click", rwlReset);
+            .querySelector("#nct-reset")
+            .addEventListener("click", nctReset);
         document
-            .querySelector("#rwl-getRegistedCourses")
+            .querySelector("#nct-getRegistedCourses")
             .addEventListener("click", get_registed_courses);
     }
 
     function saveSetting() {
         nct_userData.unavailable_int = [];
         for (let i = 11; i < 61; i++) {
-            if (document.querySelector("#rwl-setMenu #unavail" + i.toString()).checked) {
+            if (document.querySelector("#nct-setMenu #unavail" + i.toString()).checked) {
                 nct_userData.unavailable_int.push(i);
             }
         }
-        nct_userData.hide_unavailable = document.querySelector("#rwl-setMenu #hide_unavailable").checked;
-        nct_userData.hide_full = document.querySelector("#rwl-setMenu #hide_full").checked;
-        nct_userData.addBtn = document.querySelector("#rwl-setMenu #btnchecked").checked;
-        nct_userData.hide_pe_male = document.querySelector("#rwl-setMenu #hide_pe_male").checked;
-        nct_userData.hide_pe_female = document.querySelector("#rwl-setMenu #hide_pe_female").checked;
-        nct_userData.hide_pe_freshman = document.querySelector("#rwl-setMenu #hide_pe_freshman").checked;
-        nct_userData.hide_pe_sophomore = document.querySelector("#rwl-setMenu #hide_pe_sophomore").checked;
-        nct_userData.hide_pe_schoolTeam = document.querySelector("#rwl-setMenu #hide_pe_schoolTeam").checked;
-        nct_userData.target_courses = document.querySelector("#rwl-setMenu #target_courses").value.split(',');
-        nct_userData.auto_registrate = document.querySelector("#rwl-setMenu #auto_registrate").checked;
+        nct_userData.hide_unavailable = document.querySelector("#nct-setMenu #hide_unavailable").checked;
+        nct_userData.hide_full = document.querySelector("#nct-setMenu #hide_full").checked;
+        nct_userData.addBtn = document.querySelector("#nct-setMenu #btnchecked").checked;
+        nct_userData.hide_pe_male = document.querySelector("#nct-setMenu #hide_pe_male").checked;
+        nct_userData.hide_pe_female = document.querySelector("#nct-setMenu #hide_pe_female").checked;
+        nct_userData.hide_pe_freshman = document.querySelector("#nct-setMenu #hide_pe_freshman").checked;
+        nct_userData.hide_pe_sophomore = document.querySelector("#nct-setMenu #hide_pe_sophomore").checked;
+        nct_userData.hide_pe_schoolTeam = document.querySelector("#nct-setMenu #hide_pe_schoolTeam").checked;
+        nct_userData.target_courses = document.querySelector("#nct-setMenu #target_courses").value.split(',');
+        nct_userData.auto_registrate = document.querySelector("#nct-setMenu #auto_registrate").checked;
         
         save_and_display();
         closeMenu();
     }
 
     // event of reset button
-    function rwlReset() {
+    function nctReset() {
         nct_userData = { ...settingData };
         save_and_display();
         closeMenu();
@@ -507,14 +499,23 @@
     }
 
     function get_registed_courses() {
+
+        let request = new XMLHttpRequest();
+        request.open("GET", "https://course.ncku.edu.tw/index.php?c=cos21215", false);
+        request.send(null);
+        let html = request.responseText;
+        // console.log(html);
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(html, "text/html");
         let registed_courses = [];
         let eles = [];
-        [...document.getElementsByClassName("data-td vm td_bg1")].forEach((e) => {
+
+        [...doc.getElementsByClassName("data-td vm td_bg1")].forEach((e) => {
             if (e.dataset.title == "時間" && e.textContent.includes("星期")) {
                 eles.push(e);
             }
         });
-        [...document.getElementsByClassName("data-td vm td_bg2")].forEach((e) => {
+        [...doc.getElementsByClassName("data-td vm td_bg2")].forEach((e) => {
             if (e.dataset.title == "時間" && e.textContent.includes("星期")) {
                 eles.push(e);
             }
@@ -547,7 +548,7 @@
             }
         }
         if (registed_courses.length === 0) {
-            alert("請先移至已選課程清單");
+            alert("Can't get registed courses");
         } else {
             registed_courses.sort();
             nct_userData.unavailable_int = registed_courses;
@@ -561,14 +562,22 @@
     function save_and_display() {
         show_pe_courses();
         show_full_courses();
-        set_unavail(nct_userData.unavailable_int);
+        show_unavail();
+
+        set_total_time(nct_userData.unavailable_int);
+        set_unavail_courses();
+        get_pe_courses();
+        get_full_courses();
+
+        hide_unavail();
         hide_pe_courses();
         hide_full_courses();
+
         GM_setValue("nct_userData", nct_userData);
     }
 
     function closeMenu() {
-        var oldEditBox = document.querySelector("#rwl-setMenu");
+        var oldEditBox = document.querySelector("#nct-setMenu");
         if (oldEditBox) {
             oldEditBox.parentNode.removeChild(oldEditBox);
             return;
@@ -587,24 +596,24 @@
 
     // add drag event function
     function dragBtn() {
-        var rwl_node = document.querySelector("#rwl-iqxin");
-        rwl_node.addEventListener("mousedown", function (event) {
-            rwl_node.style.transition = "null";
-            var disX = event.clientX - rwl_node.offsetLeft;
-            var disY = event.clientY - rwl_node.offsetTop;
+        var nct_node = document.querySelector("#nct-window");
+        nct_node.addEventListener("mousedown", function (event) {
+            nct_node.style.transition = "null";
+            var disX = event.clientX - nct_node.offsetLeft;
+            var disY = event.clientY - nct_node.offsetTop;
 
             var move = function (event) {
-                rwl_node.style.left = event.clientX - disX + "px";
-                rwl_node.style.top = event.clientY - disY + "px";
+                nct_node.style.left = event.clientX - disX + "px";
+                nct_node.style.top = event.clientY - disY + "px";
             };
 
             document.addEventListener("mousemove", move);
             document.addEventListener("mouseup", function () {
-                rwl_node.style.transition = "0.3s";
+                nct_node.style.transition = "0.3s";
                 document.removeEventListener("mousemove", move);
-                rwl_node.style.right = nct_userData.positionRight = "auto";
-                rwl_node.style.left = nct_userData.positionLeft = 0;
-                nct_userData.positionTop = rwl_node.offsetTop;
+                nct_node.style.right = nct_userData.positionRight = "auto";
+                nct_node.style.left = nct_userData.positionLeft = 0;
+                nct_userData.positionTop = nct_node.offsetTop;
                 GM_setValue("nct_userData", nct_userData);
             });
         });
