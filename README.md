@@ -1,9 +1,11 @@
 # Ncku Course Toolkit
 ## JS script made for tampermonkey, paste it and have fun
 
-![進入設定的按鈕在左上角(會自動隱藏)](https://ibb.co/m9nTq0m)
+* ## 進入設定的按鈕在左上角(會自動隱藏)
+    ![進入設定的按鈕在左上角(會自動隱藏)](https://i.ibb.co/R3Xb0N1/setting-button.png)
 
-![設定的視窗](https://ibb.co/pd3KVXt)
+* ## 設定的視窗
+    ![設定的視窗](https://i.ibb.co/bXrvwdS/setting-window.png)
 
 ## 隱藏課程 
 * 不可用時段 ： 將與下方課表衝突的課程隱藏
