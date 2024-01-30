@@ -30,7 +30,6 @@
 * 按鈕 ： 若勾選將會每5秒刷新一次網頁
 
 ## TODO Feature
-* 點選課表字樣可全選該欄、列、或全部
 * Add CAPTCHA recognition
 * Reordering preference list in schedule page.
 * Add teachers & courses evaluation.

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ncku course toolkit
 // @namespace    Benny
-// @version      1.0.3
+// @version      1.0.4
 // @description  Toolkit for ncku course
 // @author       Benny, Wang
 // @homepage     https://github.com/BennyWang1007
@@ -160,16 +160,9 @@
                 break;
             }
         }
-        if (full) {
-            for (let i = 1; i < 11; i++) {
-                let chk = document.querySelector("#unavail" + (day * 10 + i).toString());
-                if (chk) chk.checked = false;
-            }
-        } else {
-            for (let i = 1; i < 11; i++) {
-                let chk = document.querySelector("#unavail" + (day * 10 + i).toString());
-                if (chk) chk.checked = true;
-            }
+        for (let i = 1; i < 11; i++) {
+            let chk = document.querySelector("#unavail" + (day * 10 + i).toString());
+            if (chk) chk.checked = !full;
         }
     }
 
@@ -181,16 +174,9 @@
                 break;
             }
         }
-        if (full) {
-            for (let i = 1; i < 6; i++) {
-                let chk = document.querySelector("#unavail" + (i * 10 + class_num).toString());
-                if (chk) chk.checked = false;
-            }
-        } else {
-            for (let i = 1; i < 6; i++) {
-                let chk = document.querySelector("#unavail" + (i * 10 + class_num).toString());
-                if (chk) chk.checked = true;
-            }
+        for (let i = 1; i < 6; i++) {
+            let chk = document.querySelector("#unavail" + (i * 10 + class_num).toString());
+            if (chk) chk.checked = !full;
         }
     }
 
@@ -423,40 +409,34 @@
             "#nct-setMenu p{ margin:5px auto; }" +
             "#auto_registrate { float: right; }"
         );
-        let innerH = `<div class='center'>
-        <p>設定列表</p>
-        <p> <label> 顯示設置(不熟勿動)<input id='btnchecked' type='checkbox' ${
-            d.addBtn ? "checked" : ""
-        } title="點擊腳本設定可重新開啟" </label></p>
-        <p>隱藏 不可用時段<input id='hide_unavailable' type='checkbox' ${
-            d.hide_unavailable ? "checked" : ""
-        }>&nbsp&nbsp額滿時段<input id='hide_full' type='checkbox' ${
-            d.hide_full ? "checked" : ""
-        }></p>
-        <p>體育  男 <input id='hide_pe_male' type='checkbox' ${
-            d.hide_pe_male ? "checked" : ""
-        }> 女<input id='hide_pe_female' type='checkbox' ${
-            d.hide_pe_female ? "checked" : ""
-        }> 大一<input id='hide_pe_freshman' type='checkbox' ${
-            d.hide_pe_freshman ? "checked" : ""
-        }> 大二<input id='hide_pe_sophomore' type='checkbox' ${
-            d.hide_pe_sophomore ? "checked" : ""
-        }> 校隊<input id='hide_pe_schoolTeam' type='checkbox' ${
-            d.hide_pe_schoolTeam ? "checked" : ""
-        }></p>
-        <p>&nbsp&nbsp
-        <span id="Day1">一</span>
-        <span id="Day2">二</span>
-        <span id="Day3">三</span>
-        <span id="Day4">四</span>
-        <span id="Day5">五</span>
-        </p>`;
+        
+        const ch = (id) => id ? "checked" : "";
+
+        let innerH = 
+        
+`<div class='center'>
+  <p>設定列表</p>
+  <p> <label> 顯示設置(不熟勿動)<input id='btnchecked' type='checkbox' ${ch(d.addBtn)} title="腳本設定可重新開啟" </label></p>
+  <p>隱藏 不可用時段<input id='hide_unavailable' type='checkbox' ${ch(d.hide_unavailable)}>
+  &nbsp&nbsp額滿時段<input id='hide_full' type='checkbox' ${ch(d.hide_full)}></p>
+  <p>體育  男 <input id='hide_pe_male' type='checkbox' ${ch(d.hide_pe_male)}>
+   女<input id='hide_pe_female' type='checkbox' ${ch(d.hide_pe_female)}>
+   大一<input id='hide_pe_freshman' type='checkbox' ${ch(d.hide_pe_freshman)}>
+   大二<input id='hide_pe_sophomore' type='checkbox' ${ch(d.hide_pe_sophomore)}>
+   校隊<input id='hide_pe_schoolTeam' type='checkbox' ${ch(d.hide_pe_schoolTeam)}></p>
+  <p>&nbsp&nbsp
+    <span id="day1">一</span>
+    <span id="day2">二</span>
+    <span id="day3">三</span>
+    <span id="day4">四</span>
+    <span id="day5">五</span>
+  </p>`;
 
         for (let i = 1; i < 11; i++) {
-            innerH += `<p><span id="class${i}">${i == 10 ? "A" : i.toString()}</span>`;
+            innerH += `<p><span id="class${i}">${i == 10 ? "A" : i}</span>`;
             for (let j = 1; j < 6; j++) {
                 let chk = d.unavailable_int.includes(10 * j + i) ? "checked" : "";
-                innerH += `&nbsp<input type="checkbox" id="unavail${(10*j+i).toString()}" ${chk}></input>`;
+                innerH += `&nbsp<input type="checkbox" id="unavail${10*j+i}" ${chk}></input>`;
             }
             innerH += "</p>";
         }
@@ -476,7 +456,7 @@
         document.body.appendChild(odom);
 
         for (let i = 1; i < 6; i++) {
-            document.querySelector("#nct-setMenu #Day" + i.toString()).addEventListener("click", () => {
+            document.querySelector("#nct-setMenu #day" + i.toString()).addEventListener("click", () => {
                 toggle_whole_day(i);
             });
         }
