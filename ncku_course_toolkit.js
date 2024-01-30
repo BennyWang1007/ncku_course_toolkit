@@ -77,7 +77,6 @@
     get_full_courses();
 
     save_and_display();
-    registrate_course();
 
     // -----------------main-----------------
 
@@ -588,6 +587,8 @@
         hide_full_courses();
 
         GM_setValue("nct_userData", nct_userData);
+
+        registrate_course();
     }
 
     function closeMenu() {
