@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ncku course toolkit
 // @namespace    Benny
-// @version      1.0.2 alpha
+// @version      1.0.3
 // @description  Toolkit for ncku course
 // @author       Benny, Wang
 // @homepage     https://github.com/BennyWang1007
@@ -49,13 +49,15 @@
         positionLeft: "0",
         positionRight: "auto",
     };
+    let btn_node = null;
+    let nct_userData = null;
 
     // -----------------variable-----------------
 
     // -----------------main-----------------
 
     // check if user data exist
-    let nct_userData = GM_getValue("nct_userData");
+    nct_userData = GM_getValue("nct_userData");
     if (!nct_userData) {
         nct_userData = { ...settingData };
     }
@@ -68,12 +70,8 @@
     }
 
     addBtn();
-    let btn_node = document.getElementById("black_node");
-    setBtn();
 
     GM_registerMenuCommand("ncku course setting", setMenu);
-
-    // unavail_time_int = nct_userData.unavailable_int;
 
     get_pe_courses();
     get_full_courses();
@@ -83,17 +81,12 @@
 
     // -----------------main-----------------
 
-    let timer = setTimeout(function () {
-        if (nct_userData.auto_registrate) {
-            window.location.reload();
-        }
-    }, 5000);
 
     function registrate_course() {
         if (!nct_userData.auto_registrate) return;
         if (!nct_userData.target_courses.length) return;
+        let reg_button = null;
         for (const ele of document.querySelectorAll("td")) {
-            let reg_button = null;
             for (let cono of nct_userData.target_courses) {
                 if (ele.textContent.includes(cono)) {
                     reg_button = ele.parentNode.querySelectorAll(
@@ -104,31 +97,20 @@
             }
             // console.log(reg_button);
             if (reg_button) {
+                if (reg_button.parentNode.parentNode.style.display === "none") {
+                    reg_button = null;
+                    continue;
+                }
                 reg_button.click();
                 break;
             }
         }
+        if (!reg_button) {
+            window.setTimeout(() => {
+                window.location.reload();
+            }, 5000);
+        }
     }
-            
-            
-
-    // function set_unavail_int(unavail_time_str) {
-    //     let unavail_time = unavail_time_str.split(',');
-    //     unavail_time_int = [];
-    //     for (let i = 0; i < unavail_time.length; i++) {
-    //         let temp_pair = [];
-    //         if (unavail_time[i].includes('~')) {
-    //             temp_pair = unavail_time[i].split('~');
-    //             for (let j = parseInt(temp_pair[0]); j <= parseInt(temp_pair[1]); j++) {
-    //                 unavail_time_int.push(j);
-    //             }
-    //         }
-    //         else {
-    //             if (unavail_time === "") continue;
-    //             unavail_time_int.push(parseInt(unavail_time[i]));
-    //         }
-    //     }
-    // }
 
     function set_total_time(unavail_time_int2) {
         let total_time2 = [];
@@ -168,6 +150,48 @@
             }
         });
         // console.log("find " + cnt + " unavial courses");
+    }
+
+    function toggle_whole_day(day) {
+        let full = true;
+        for (let i = 1; i < 11; i++) {
+            if (!document.querySelector("#unavail" + (day * 10 + i).toString()).checked) {
+                full = false;
+                break;
+            }
+        }
+        if (full) {
+            for (let i = 1; i < 11; i++) {
+                let chk = document.querySelector("#unavail" + (day * 10 + i).toString());
+                if (chk) chk.checked = false;
+            }
+        } else {
+            for (let i = 1; i < 11; i++) {
+                let chk = document.querySelector("#unavail" + (day * 10 + i).toString());
+                if (chk) chk.checked = true;
+            }
+        }
+    }
+
+    function toggle_whole_class(class_num) {
+        let full = true;
+        for (let i = 1; i < 6; i++) {
+            if (!document.querySelector("#unavail" + (i * 10 + class_num).toString()).checked) {
+                full = false;
+                break;
+            }
+        }
+        if (full) {
+            for (let i = 1; i < 6; i++) {
+                let chk = document.querySelector("#unavail" + (i * 10 + class_num).toString());
+                if (chk) chk.checked = false;
+            }
+        } else {
+            for (let i = 1; i < 6; i++) {
+                let chk = document.querySelector("#unavail" + (i * 10 + class_num).toString());
+                if (chk) chk.checked = true;
+            }
+        }
     }
 
     function get_pe_courses() {
@@ -231,23 +255,8 @@
         if (!unavail_courses.length) return;
         unavail_courses.forEach((ele) => (ele.style.display = ""));
     }
-    
-    // set all variables of unavail
-    // function set_unavail(unavail_time_int2) {
-    //     set_total_time(unavail_time_int2);
-    //     show_unavail();
-    //     set_unavail_courses();
-    //     hide_unavail();
-    // }
 
-    function setBtn() {
-        addDragEven();
-        // setBtnClick();
-        document.querySelector("#nct-setbtn").addEventListener("click", setMenu);
-        if (nct_userData.addBtn) btn_node.checked = true;
-    }
-
-    // 設置按鈕
+    // set up button
     function addBtn() {
         var node = document.createElement("course_toolkit_window");
         node.id = "nct-window";
@@ -363,6 +372,11 @@
         } else {
             GM_addStyle(styleInner);
         }
+
+        btn_node = document.getElementById("black_node");
+        addDragEven();
+        document.querySelector("#nct-setbtn").addEventListener("click", setMenu);
+        if (nct_userData.addBtn) btn_node.checked = true;
     }
 
     // open setting menu
@@ -430,9 +444,16 @@
         }> 校隊<input id='hide_pe_schoolTeam' type='checkbox' ${
             d.hide_pe_schoolTeam ? "checked" : ""
         }></p>
-        <p>&nbsp&nbsp&nbsp一  二  三  四  五</p>`;
+        <p>&nbsp&nbsp
+        <span id="Day1">一</span>
+        <span id="Day2">二</span>
+        <span id="Day3">三</span>
+        <span id="Day4">四</span>
+        <span id="Day5">五</span>
+        </p>`;
+
         for (let i = 1; i < 11; i++) {
-            innerH += "<p>" + (i == 10 ? "A" : i.toString());
+            innerH += `<p><span id="class${i}">${i == 10 ? "A" : i.toString()}</span>`;
             for (let j = 1; j < 6; j++) {
                 let chk = d.unavailable_int.includes(10 * j + i) ? "checked" : "";
                 innerH += `&nbsp<input type="checkbox" id="unavail${(10*j+i).toString()}" ${chk}></input>`;
@@ -453,6 +474,19 @@
             "</div>";
         odom.innerHTML = innerH;
         document.body.appendChild(odom);
+
+        for (let i = 1; i < 6; i++) {
+            document.querySelector("#nct-setMenu #Day" + i.toString()).addEventListener("click", () => {
+                toggle_whole_day(i);
+            });
+        }
+
+        for (let i = 1; i < 11; i++) {
+            document.querySelector("#nct-setMenu #class" + i.toString()).addEventListener("click", () => {
+                toggle_whole_class(i);
+            });
+        }
+
 
         document
             .querySelector("#nct-setMenuSave")
@@ -619,16 +653,16 @@
         });
     }
 
-    function debug() {
-        console.log("--------debug--------");
-        console.log("total_time", total_time);
-        console.log("unavail_courses", unavail_courses);
-        console.log("pe_courses", pe_courses);
-        console.log("full_courses", full_courses);
-        console.log("settingData", settingData);
-        console.log("nct_userData", nct_userData);
-        console.log("---------------------");
-    }
+    // function debug() {
+    //     console.log("--------debug--------");
+    //     console.log("total_time", total_time);
+    //     console.log("unavail_courses", unavail_courses);
+    //     console.log("pe_courses", pe_courses);
+    //     console.log("full_courses", full_courses);
+    //     console.log("settingData", settingData);
+    //     console.log("nct_userData", nct_userData);
+    //     console.log("---------------------");
+    // }
     // debugger;
 })();
 
